@@ -2,23 +2,20 @@
 
 ## Why this pattern exists
 
-An AI app fronted by a **Microsoft Foundry agent** often needs to ground its
-answers in **Microsoft Fabric** data. Two things about the current state of
-Foundry ↔ Fabric integration force the design in this repo:
+An AI app fronted by a **Microsoft Foundry agent** often grounds its answers
+in **Microsoft Fabric** data. The design choice this repo makes is about
+**who** authenticates to Fabric.
 
-1. **There is no managed-identity pass-through from a Foundry agent to a
-   Fabric data agent today** (as of August 2026). A Foundry agent cannot
-   simply "call Fabric as itself" using a workload managed identity.
-2. **Granting every end user direct Fabric access is not viable.** A chat
-   webapp may have hundreds or thousands of users. Some of them should not
-   have any direct access to the Fabric workspace at all — they are consumers
-   of grounded answers, not of raw data.
+If Fabric is called under the end user's identity, every end user of the app
+needs direct Fabric access. A chat webapp may have hundreds or thousands of
+users; some of them should not have any direct access to the Fabric workspace
+at all — they are consumers of grounded answers, not of raw data. That does
+not scale, and it breaks data governance.
 
-If you skip this pattern:
-
-- You either grant every app user access to the Fabric workspace and data
-  agent (unscalable and violates data governance), or
-- You block Fabric-grounded answers entirely.
+This repo makes the alternative choice: the **app** authenticates to Fabric
+with its own identity, under a service principal (SPN) that has been granted
+workspace and data-source access. End users authenticate at the app boundary;
+the app calls Fabric on their behalf.
 
 ### The pattern
 
