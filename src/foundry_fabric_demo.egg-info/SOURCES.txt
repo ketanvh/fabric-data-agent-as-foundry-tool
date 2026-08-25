@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+src/foundry_fabric_demo/__init__.py
+src/foundry_fabric_demo/__main__.py
+src/foundry_fabric_demo/cli.py
+src/foundry_fabric_demo/config.py
+src/foundry_fabric_demo/fabric_client.py
+src/foundry_fabric_demo/fabric_tool.py
+src/foundry_fabric_demo/foundry_agent.py
+src/foundry_fabric_demo.egg-info/PKG-INFO
+src/foundry_fabric_demo.egg-info/SOURCES.txt
+src/foundry_fabric_demo.egg-info/dependency_links.txt
+src/foundry_fabric_demo.egg-info/entry_points.txt
+src/foundry_fabric_demo.egg-info/requires.txt
+src/foundry_fabric_demo.egg-info/top_level.txt
+tests/test_fabric_tool.py

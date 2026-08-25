@@ -1,0 +1,2 @@
+[console_scripts]
+foundry-fabric-demo = foundry_fabric_demo.cli:main
