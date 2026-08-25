@@ -6,13 +6,11 @@ Solves a real access-governance problem for AI apps that combine
 **Microsoft Foundry agents** with **Microsoft Fabric data agents**.
 
 **The problem.** An AI app fronted by a Foundry agent often needs to answer
-questions grounded in Fabric data. Today (August 2026), there is **no
-managed-identity pass-through from a Foundry agent to a Fabric data agent**.
-The naive approach — each end user calls the Foundry agent, which calls the
-Fabric data agent as that same user — requires **every end user of the app to
-have direct Fabric access**. That is impractical for a chat webapp with
-hundreds or thousands of users, and it breaks data governance in scenarios
-where the end user should not have direct Fabric access at all.
+questions grounded in Fabric data. If the app calls the Fabric data agent
+under the end user's identity, then **every end user of the app needs direct
+Fabric access**. That does not scale for a chat webapp with hundreds or
+thousands of users, and it breaks data governance in scenarios where the end
+user should not have direct Fabric access at all.
 
 **This pattern.** The **app itself** (the process hosting the Foundry
 conversation loop) authenticates to Fabric under a single **service principal
@@ -37,10 +35,10 @@ diagram, credential boundary, and production shape.
 - **Foundry side** — called with the app's identity.
   Locally: `DefaultAzureCredential` (developer's `az login`).
   In production: **Managed Identity** of the app service / container.
-- **Fabric side** — called with a **service principal (SPN)**, because
-  managed-identity pass-through from a Foundry agent to a Fabric data agent
-  is not supported today. `ClientSecretCredential` reads the SPN from
-  `.env`; in production the secret should come from Key Vault.
+- **Fabric side** — called with a **service principal (SPN)** that has been
+  granted Fabric workspace and data-source access. `ClientSecretCredential`
+  reads the SPN from `.env`; in production the secret should come from Key
+  Vault.
 
 End users authenticate at the **app boundary** (your webapp's sign-in). The
 app authorizes them for the Foundry conversation. Fabric is called by the
@@ -102,3 +100,14 @@ Offline checks:
 ```powershell
 pytest
 ```
+
+## References
+
+- [Microsoft Foundry](https://learn.microsoft.com/en-us/azure/ai-foundry/)
+- [Fabric data agent — end-to-end](https://learn.microsoft.com/en-us/fabric/data-science/data-agent-end-to-end)
+- [Fabric data agent as a Model Context Protocol server](https://learn.microsoft.com/en-us/fabric/data-science/data-agent-mcp-server)
+- [Service principal authentication for Fabric data agents](https://learn.microsoft.com/en-us/fabric/data-science/data-agent-service-principal)
+- [`azure-ai-projects` Python SDK](https://learn.microsoft.com/en-us/python/api/overview/azure/ai-projects-readme)
+- [Azure Identity for Python](https://learn.microsoft.com/en-us/python/api/overview/azure/identity-readme)
+- [Managed identities for Azure resources](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)
+- [Model Context Protocol](https://modelcontextprotocol.io/)
