@@ -19,6 +19,21 @@ conversation loop) authenticates to Fabric under a single **service principal
 (SPN)** that has been granted Fabric workspace access. End users never touch
 Fabric. The app's identity — not the user's — accesses the data.
 
+```mermaid
+flowchart LR
+    User([End user])
+    App[Your app<br/>fabric.py + foundry.py]
+    Foundry[Microsoft Foundry<br/>prompt agent]
+    Fabric[Microsoft Fabric<br/>data agent]
+
+    User -- webapp sign-in --> App
+    App -- app identity<br/>Managed Identity in prod --> Foundry
+    App -- service principal<br/>SPN --> Fabric
+```
+
+See [docs/architecture.md](docs/architecture.md) for the detailed component
+diagram, credential boundary, and production shape.
+
 - **Foundry side** — called with the app's identity.
   Locally: `DefaultAzureCredential` (developer's `az login`).
   In production: **Managed Identity** of the app service / container.
